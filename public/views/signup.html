@@ -4,7 +4,11 @@
     <div class="page-header">
         <h3>Signup</h3>
     </div>
-    <alert ng-repeat="alert in alerts" type="{{alert.type}}" class="animate-repeat" close="closeAlert($index)">{{alert.msg}}</alert>
+    <div ng-repeat="alert in alerts" class="alert alert-{{alert.type}} alert-dismissible"
+            role="alert" close="closeAlert($index)">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{alert.msg}}
+    </div>
     <!-- LOGIN FORM -->
     <form role="form" name="signupForm" novalidate>
         <div class="form-group">
