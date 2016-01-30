@@ -1,0 +1,12 @@
+{
+  "name": "angular",
+  "version": "1.0.0",
+  "dependencies": {
+    "bootstrap": "3.3.6",
+    "angular": "1.4.9",
+    "angular-ui-router": "0.2.17",
+    "angular-animate": "1.4.9",
+    "ng-file-upload": "latest",
+    "ngToast": "ngtoast#^1.5.6"
+  }
+}

@@ -1,0 +1,117 @@
+@font-face {
+    font-family: Dosis;
+    src: url('../fonts/Dosis-Medium.ttf');
+}
+
+html {
+    min-height: 100%;
+}
+
+body { 
+    padding-top:30px;
+    font-family: 'Dosis', sans-serif;
+    min-height: 100%;
+    background: rgb(55,182,199);
+    background: rgba(55,182,199,1);
+    background: -moz-linear-gradient(top, rgba(55,182,199,1) 0%, rgba(22,144,159,1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(55,182,199,1)), color-stop(100%, rgba(22,144,159,1)));
+    background: -webkit-linear-gradient(top, rgba(55,182,199,1) 0%, rgba(22,144,159,1) 100%);
+    background: -o-linear-gradient(top, rgba(55,182,199,1) 0%, rgba(22,144,159,1) 100%);
+    background: -ms-linear-gradient(top, rgba(55,182,199,1) 0%, rgba(22,144,159,1) 100%);
+    background: linear-gradient(to bottom, rgba(55,182,199,1) 0%, rgba(22,144,159,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#37b6c7', endColorstr='#16909f', GradientType=0 );
+}
+
+.view {
+    font-family: 'Dosis', sans-serif;
+    color: white;
+}
+
+.list-group-item  {
+    background-color: white;
+    background-color: rgba(255,0,255,0);
+    border: 0;
+}
+
+.form-control {
+    opacity: 0.7;    
+}
+
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.download-links {
+    color: white;
+    text-decoration: underline;
+    font-style: italic;
+}
+
+.download-links:hover {
+    color: white;
+}
+
+b {
+    font-size: 16px;
+}
+
+#custom-bootstrap-menu.navbar-default .navbar-brand {
+    color: rgba(255, 255, 255, 1);
+}
+#custom-bootstrap-menu.navbar-default {
+    font-size: 14px;
+    background-color: rgba(22, 144, 159, 1);
+    background: -webkit-linear-gradient(top, rgba(55, 182, 199, 1) 0%, rgba(22, 144, 159, 1) 100%);
+    background: linear-gradient(to bottom, rgba(55, 182, 199, 1) 0%, rgba(22, 144, 159, 1) 100%);
+    border-width: 0px;
+    border-radius: 0px;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 0);
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(120, 239, 255, 1);
+    background-color: rgba(19, 174, 194, 1);
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(120, 239, 255, 1);
+    background-color: rgba(46, 177, 194, 0);
+    background: -webkit-linear-gradient(top, rgba(22, 144, 159, 0) 0%, rgba(46, 177, 194, 0) 100%);
+    background: linear-gradient(to bottom, rgba(22, 144, 159, 0) 0%, rgba(46, 177, 194, 0) 100%);
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle {
+    border-color: #2eb1c2;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+    background-color: #2eb1c2;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #2eb1c2;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #16909f;
+}
+

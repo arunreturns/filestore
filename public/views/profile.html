@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+
+    <div class="page-header">
+        <h3>Profile</h3>
+    </div>
+    <div ng-repeat="alert in alerts" class="alert alert-{{alert.type}} alert-dismissible"
+            role="alert" close="closeAlert($index)">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{alert.msg}}
+    </div>
+    <!-- LOGIN FORM -->
+    <form name="userDetails" role="form" ng-submit="updateUser()" novalidate>
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.firstName" name="firstName">
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.lastName" name="lastName">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.email" name="email">
+        </div>
+        <div class="form-group">
+            <label>User Name</label>
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.userName" name="userName" readonly>
+        </div>
+        <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.phoneNo" name="phoneNo">
+        </div>
+        
+        <button type="submit" class="btn btn-warning btn-lg">Update</button>
+    </form>
+
+    <hr>
+
+    <p>Go <a class="download-links" href="#/home">Home</a>.</p>
+
+</div>
+</div>

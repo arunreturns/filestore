@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>File Upload</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="libs/ngToast/dist/ngToast.min.css">
+	<link rel="stylesheet" href="css/style.css"> <!-- custom styles -->
+	<link rel="stylesheet" href="css/animations.css">
+
+	<!-- JS -->
+	<script src="libs/jquery/dist/jquery.min.js"></script>
+	<script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="libs/angular/angular.js"></script>
+	<script src="libs/angular-animate/angular-animate.js"></script>
+	<script src="libs/angular-sanitize/angular-sanitize.min.js"></script>
+	<script src="libs/ngToast/dist/ngToast.min.js"></script>
+	<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.1.1.js"></script>
+	<script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+	<script src="libs/ng-file-upload/ng-file-upload.min.js"></script>
+	
+	<!-- ANGULAR CUSTOM -->
+	<!-- CONTROLLERS -->
+	<script src="js/appController.js"></script>
+	<!-- SERVICES -->
+	<script src="js/appServices.js"></script>
+	<!-- DIRECTIVES -->
+	<script src="js/appDirectives.js"></script>
+	<!-- ROUTES -->
+	<script src="js/appRoutes.js"></script>
+	<script src="js/app.js"></script>
+</head>
+<body ng-app="fileApp" ng-controller="MainCtrl">
+	<toast></toast>
+<nav id="custom-bootstrap-menu" class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#/home" tooltip-placement="bottom" tooltip="Home"><span class="glyphicon glyphicon-home"></span> Home</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navbar-main">
+			<ul class="nav navbar-nav">
+				<li><a href="#/upload" data-toggle="collapse" data-target=".navbar-collapse.in" tooltip-placement="bottom" tooltip="Upload Files">Upload Files</a></li>
+				<li><a href="#/view" data-toggle="collapse" data-target=".navbar-collapse.in" tooltip-placement="bottom" tooltip="View Files">View Files</a></li>
+				<li><a href="#/signup" data-toggle="collapse" data-target=".navbar-collapse.in" tooltip-placement="bottom" tooltip="Signup">Signup</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="#/profile" data-toggle="collapse" data-target=".navbar-collapse.in" tooltip-placement="bottom" tooltip="View Profile"><span class="glyphicon glyphicon-user"></span> {{user.userName}}</a></li>
+				<li><a href="#/home" data-toggle="collapse" data-target=".navbar-collapse.in" ng-click="logOut()" tooltip-placement="bottom" tooltip="Logout">Logout</a></li>
+			</ul>	
+			<form class="navbar-form navbar-right" role="search" ng-if="user.userName !== 'Login'">
+				<div class="input-group">
+					<input type="text" class="form-control" ng-model='navSearch' placeholder="Search Files">
+					<div class='input-group-btn'>
+				    	<button class="btn btn-default" ng-click='searchNav()' tooltip-placement="bottom" tooltip="Search"><i class="glyphicon glyphicon-search"></i></button>
+				    </div>
+			  	</div>
+			</form>
+		</div>
+	</div>
+	
+</nav>
+
+<!-- ANGULAR DYNAMIC CONTENT -->
+<div ui-view class="view"></div>
+
+</body>
+</html>

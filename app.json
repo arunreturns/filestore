@@ -1,0 +1,8 @@
+{
+  "name": "File Upload Download App",
+  "description": "A MEAN app with File Upload and Download from Mongo",
+  "repository": "https://github.com/heroku/node-js-getting-started",
+  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
+}
