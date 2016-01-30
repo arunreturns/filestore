@@ -10,18 +10,18 @@
             {{alert.msg}}
     </div>
     <!-- LOGIN FORM -->
-    <form name="userDetails" role="form" ng-submit="updateUser()" novalidate>
+    <form name="userDetails" role="form" novalidate>
         <div class="form-group">
             <label>First Name</label>
-            <input type="text" class="form-control" autocomplete="off" ng-model="user.firstName" name="firstName">
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.firstName" name="firstName" ng-required="true">
         </div>
         <div class="form-group">
             <label>Last Name</label>
-            <input type="text" class="form-control" autocomplete="off" ng-model="user.lastName" name="lastName">
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.lastName" name="lastName" ng-required="true">
         </div>
         <div class="form-group">
             <label>Email</label>
-            <input type="text" class="form-control" autocomplete="off" ng-model="user.email" name="email">
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.email" name="email" ng-required="true">
         </div>
         <div class="form-group">
             <label>User Name</label>
@@ -29,10 +29,11 @@
         </div>
         <div class="form-group">
             <label>Phone Number</label>
-            <input type="text" class="form-control" autocomplete="off" ng-model="user.phoneNo" name="phoneNo">
+            <input type="text" class="form-control" autocomplete="off" ng-model="user.phoneNo" name="phoneNo" ng-required="true">
         </div>
-        
-        <button type="submit" class="btn btn-warning btn-lg">Update</button>
+        <button type="submit" class="btn btn-warning btn-lg" ng-disabled="!userDetails.$dirty || !userDetails.$valid || clicked" ng-click="(clicked = !clicked) && updateUser()">
+            {{ clicked ? 'Updating..' : 'Update' }}
+        </button>
     </form>
 
     <hr>

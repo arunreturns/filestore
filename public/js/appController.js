@@ -14,7 +14,10 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 .controller('LoginCtrl',
     function($scope, UserService, $log) {
         $scope.updateUser = function(){
-            UserService.updateUser($scope.user);
+            UserService.updateUser($scope.user).then(function(){
+                $scope.userDetails.$setPristine();
+                $scope.clicked = false;
+            });
         };
 
         if ( UserService.currentUser) {

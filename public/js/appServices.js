@@ -62,7 +62,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         signupUser: function(user){
             var self = this;
             $log.info("Signing Up the User");
-            return $http.post('/signup', {
+            $http.post('/signup', {
                 user: user
             }).success(function(user){
                 $log.info(user);
@@ -75,7 +75,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         updateUser: function(user){
             var self = this;
             $log.info("Updating the User");
-            $http.post('/update', {
+            return $http.post('/update', {
                 user: user
             })
             .success(function(user){
