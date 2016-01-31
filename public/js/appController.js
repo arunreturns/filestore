@@ -2,9 +2,13 @@
 angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngToast'])
 
 .controller('SignupCtrl',
-    function($scope, UserService, $state) {
+    function($scope, UserService, $state, ngToast) {
         $scope.signupUser = function(){
             UserService.signupUser($scope.newUser).then(function(){
+                ngToast.create({
+                    className: 'warning',
+                    content: 'Signed up successfully'
+                });
                 $state.go('profile');
             });
         };
@@ -12,9 +16,13 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 )
 
 .controller('LoginCtrl',
-    function($scope, UserService, $log) {
+    function($scope, UserService, $log, ngToast) {
         $scope.updateUser = function(){
             UserService.updateUser($scope.user).then(function(){
+                ngToast.create({
+                    className: 'warning',
+                    content: 'Profile Updated successfully'
+                });
                 $scope.userDetails.$setPristine();
                 $scope.clicked = false;
             });
