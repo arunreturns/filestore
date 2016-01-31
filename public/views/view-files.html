@@ -9,7 +9,7 @@
                 <li class="list-group-item" ng-repeat="file in filesList">
                     <div class="row">
                         <div class="col-sm-6">
-                            <b>File Name</b> : <a class="download-links" href="/getFile/{{file._id}}">{{ file.filename }}</a>
+                            <b>File Name</b> : <a class="download-links" download="{{file.filename}}" href="/getFile/{{file._id}}">{{ file.filename }}</a>
                         </div>
                         <div class="col-sm-6">
                             <div class="text-center pull-right">

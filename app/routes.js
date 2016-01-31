@@ -218,8 +218,11 @@ module.exports = function(app) {
 	    		console.log(err);
 	    	var file = files[0];
 	    	console.log("Got something", file);
-	    	console.log("Metadata is ", file.metadata);
-	    	res.writeHead(200, {'Content-Type': file.metadata["file"].type});
+	    	console.log("File Name is ", file.filename);
+	    	console.log("File Type is ", file.metadata["file"].type);
+	    	
+	    	res.setHeader('Content-disposition', 'attachment; filename=' + file.filename);
+  			res.setHeader('Content-type', file.metadata["file"].type);
 	    	
 	    	var readstream = gfs.createReadStream({
 	    		_id: file._id
