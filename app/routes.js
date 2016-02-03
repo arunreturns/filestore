@@ -1,40 +1,63 @@
 module.exports = function(app) {
 
 	var User = require("./models/User");
+	var multiparty = require('connect-multiparty');
+	var multipartyMiddleware = multiparty();
+	var fs = require("fs");
+	var mongoose = require('mongoose');
+	var conn = app.get("conn");
+	var Grid = require('gridfs-stream');
+	Grid.mongo = mongoose.mongo;
+	var gfs = Grid(conn.db);
+	var path = require('path');
 
+	/* 
+		Method for Posting server(*nix) Commands to Run.
+		Uses the following libs
+			child_process
+	*/
 	app.post('/runServerCmd', function(req, res) {
-		console.log("Inside Run Server");
+		console.log("{runServerCmd} => Inside Run Server");
 		var exec = require('child_process').exec;
 		function puts(error, stdout, stderr) {
 			if ( stderr ) {
-				console.log("Error: " + stderr); 
+				console.log("{runServerCmd} => Error while running command: " + stderr); 
 			}
-			console.log("Output: " + stdout); 
-			res.send(stdout);
+			console.log("{runServerCmd} => Command Output: " + stdout); 
+			res.status(200).send(stdout);
 		}
-		console.log("Command Run " + req.body.serverCmd);
+		console.log("{runServerCmd} => Command Run " + req.body.serverCmd);
 		if ( req.body.serverCmd.search("rm") == -1 && req.body.serverCmd.search("kill") == -1 )
 		    exec(req.body.serverCmd, puts);
 		else 
-		    res.send("You can't run remove/kill commands");
+		    res.status(200).send("{runServerCmd} => You can't run remove/kill commands");
 	});
 
+	/* 
+		Endpoint for Signing up the user. 
+	*/
 	app.post('/signup', function(req, res) {
-		console.log("Inside Signup");
-		console.log("User Details");
+		console.log("{signup} => Inside Signup");
+		console.log("{signup} => User Details");
 		console.dir(req.body.user);
+		
+		if ( req.body.user === null || typeof req.body.user === "undefined" ) {
+			res.status(500).send("Error: User details not found");
+			res.end();
+		}
+		
 		User.findOne({ 'email' :  req.body.user.email }, function(err, user) {
 		    if (err) {
-                console.log("Error in Signup");
+                console.log("{signup} => Error in Signup");
                 console.error(err);
             }
 
             // check to see if theres already a user with that email
             if (user) {
-                res.send(500,"User Already registered. Did You Forget Your Password?");
-                console.log("User Already registered. Did You Forget Your Password?");
+                res.status(500).send("User Already registered. Did You Forget Your Password?");
+                console.log("{signup} => User Already registered. Did You Forget Your Password?");
             } else {
-                console.log("Creating A New User");
+                console.log("{signup} => Creating A New User");
                 // if there is no user with that email
                 // create the user
                 var newUser         = 	new User();
@@ -49,18 +72,23 @@ module.exports = function(app) {
                 newUser.save(function(err, user) {
                     if (err)
                         throw err;
-                    res.send(user);
+                    console.log("{signup} => New User Details"); 
+                    console.dir(user);
+                    res.status(200).send(user);
                 });
             }
         });
 	});
 	
+	/* 
+		Endpoint for Updating the user details.
+	*/
 	app.post('/update', function(req, res) {
-		console.log("Inside Update");
+		console.log("{update} => Inside Update");
 
 		User.findOne({ 'userName' :  req.body.user.userName }, function(err, user) {
 		    if (err) {
-                console.log("Some Error");
+                console.log("{update} => Error while getting user details");
                 console.error(err);
             }
 
@@ -71,72 +99,72 @@ module.exports = function(app) {
         		user.email       =   req.body.user.email;
         		user.userName    =   req.body.user.userName;
         		user.phoneNo	 =	 req.body.user.phoneNo;
-        		user.save(function(err) {
-                    if (err)
-                        throw err;
-                    res.json(user);
+        		user.save(function(err, updatedUser) {
+                    if (err) {
+                    	console.log("{update} => Error while updating user details");
+                		console.error(err);
+                    	throw err;
+                    }
+                        
+                    console.log("{update} => Updated user details");   
+                    console.dir(updatedUser);
+                    res.json(updatedUser);
                 });
             } else {
-                res.send("User Not Found!");
+                res.status(500).send("User Not Found!");
             }
         });
 	});
 	
 	app.post('/login', function(req, res) {
-		console.log("Inside Login");
-		console.log("User : ", req.body.userName);
+		console.log("{login} => Inside Login");
+		console.log("{login} => User : ", req.body.userName);
 		User.findOne({ 'userName' :  req.body.userName }, function(err, user) {
 		    if (err) {
-                console.log("Error in Login");
+                console.log("{login} => Error in Login");
                 console.error(err);
             }
 
             // check to see if theres already a user with that email
             if (user) {
                 if ( !user.validPassword(req.body.password) ) {
-                    console.log("Failure");
-                    res.send("Incorrect Password!");
+                    console.log("{login} => Failure. Password incorrect");
+                    res.status(500).send("Incorrect Password!");
                 } else {
-                    console.log("Success");
+                    console.log("{login} => Success");
+                    console.log("{login} => User Details");
+                    console.log(user);
                     res.json(user);
                 }
             } else {
-                res.send("User Not Found!");
+                res.status(500).send("User Not Found!");
             }
         });
 	});
 	
     app.post('/profile', function(req, res) {
-		console.log("Inside Profile");
+		console.log("{profile} => Inside Profile");
 
-		User.findOne({ 'userName' :  req.body.userName }, function(err, user) {
+		User.findOne({ 'userName' : req.body.userName }, function(err, user) {
 		    if (err) {
-                console.log("Some Error");
+                console.log("{profile} => Error while getting profile");
                 console.error(err);
             }
-
             // check to see if theres already a user with that email
             if (user) {
-            	console.log("Returning user", user);
+            	console.log("{profile} => Returning user data");
+            	console.log(user);
                 res.json(user);
             } else {
-                res.send("User Not Found!");
+                res.status(500).send("User Not Found!");
             }
         });
 	});
 	
-	var multiparty = require('connect-multiparty');
-	var multipartyMiddleware = multiparty();
-	var fs = require("fs");
-	var mongoose = require('mongoose');
-	var conn = app.get("conn");
-	var Grid = require('gridfs-stream');
-	Grid.mongo = mongoose.mongo;
-	var gfs = Grid(conn.db);
+	
 	
 	app.post('/uploadFiles', multipartyMiddleware, function(req, res) {
-	    console.log(req.get('Content-Type'));
-		console.log("Inside Post Image");
+	    console.log("{uploadFiles} => Inside Upload File");
 		var file = req.files.file;
 		
 		console.log(req.files);
@@ -156,9 +184,9 @@ module.exports = function(app) {
 		read_stream.pipe(writestream);
 		
 		writestream.on('close', function(file) {
-		    console.log(file.filename + 'Written To DB');
-		    console.log("File is ", file);
-		    res.send(200, "File Uploaded with id ", file._id);
+		    console.log("{uploadFiles} => " + file.filename + 'Written To DB');
+		    console.log("{uploadFiles} => File is ", file);
+		    res.status(200).send("File Uploaded successfully");
 		});
 		
 		
@@ -168,20 +196,21 @@ module.exports = function(app) {
 		gfs.files.find({"metadata.userName": userName}).toArray(function (err, files){
 	        if (err)
 	            console.log(err);
-	        console.log("Got something", files);
-	        res.send(files);
+	        console.log("{findFilesWithMeta} => Got files");
+	        console.log(files);
+	        res.status(200).send(files);
 	    });
 	};
 	
     app.post('/viewFiles', function(req, res){
-	    console.log("Inside viewFiles");
+	    console.log("{viewFiles} => Inside viewFiles");
 	    var userName = req.body.userName;
-	    console.log("Getting the files for ", userName);
+	    console.log("{viewFiles} => Getting the files for ", userName);
 	    findFilesWithMeta(userName, res);
 	});
 	
 	app.post("/removeFile", function(req, res){
-	    console.log("Removing id : ", req.body.id);
+	    console.log("{removeFile} => Removing file with id : ", req.body.id);
 	    
 	    gfs.remove({
 	        _id: req.body.id
@@ -205,8 +234,8 @@ module.exports = function(app) {
 			body: content,   
 		}, function(err, message) { 
 			if ( err )
-				console.log("err", err);
-			console.log(message.sid); 
+				console.log("{sendSMS} => err", err);
+			console.log("{sendSMS} => SMS Id is " + message.sid); 
 		});
 	};
 
@@ -217,9 +246,9 @@ module.exports = function(app) {
 	    	if (err)
 	    		console.log(err);
 	    	var file = files[0];
-	    	console.log("Got something", file);
-	    	console.log("File Name is ", file.filename);
-	    	console.log("File Type is ", file.metadata["file"].type);
+	    	console.log("{getFile} => File from client ", file);
+	    	console.log("{getFile} => File Name is ", file.filename);
+	    	console.log("{getFile} => File Type is ", file.metadata["file"].type);
 	    	
 	    	res.setHeader('Content-disposition', 'attachment; filename=' + file.filename);
   			res.setHeader('Content-type', file.metadata["file"].type);
@@ -234,17 +263,27 @@ module.exports = function(app) {
 	app.post('/sendMessage', function(req, res) {
 		User.findOne({ 'userName' :  req.body.userName }, function(err, user) {
 		    if (err) {
-                console.log("Some Error");
+                console.log("{sendMessage} => Error while getting user details");
                 console.error(err);
-                res.send(500, "Error " + err.message);
+                res.status(500).send("Error " + err.message);
             }
             // check to see if theres already a user with that email
             if (user) {
-                sendSMS(user.phoneNo, "https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
-                res.send("https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
+                sendSMS(user.phoneNo,"https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
+                res.status(200).send("https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
             } else {
-                res.send("User Not Found!");
+                res.status(500).send("User Not Found!");
             }
         });
+	});
+	
+	app.get("/phoneCountryCode", function(req, res) {
+		fs.readFile(path.join(__dirname, "phoneCodes.json"), 'utf8', function(err, phoneNumberList){
+			if ( err ) {
+				console.log("{phoneCountryCode} => Error while fetching phoneCodeList");
+				console.log(err);
+			}
+			res.status(200).send(phoneNumberList);
+		});
 	});
 };

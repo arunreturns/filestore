@@ -1,6 +1,7 @@
 // modules =================================================
 var express         = require('express');
 var app             = express();
+var path            = require('path');
 var mongoose        = require('mongoose');
 var bodyParser      = require('body-parser');
 var methodOverride  = require('method-override');
@@ -13,7 +14,7 @@ var db = require('./config/db');
 
 var port = process.env.PORT || 8080; // set our port
 mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(morgan('dev'));
 //app.use(cookieParser());
 // get all data/stuff of the body (POST) parameters

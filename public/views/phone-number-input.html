@@ -1,0 +1,17 @@
+<div class="input-group">
+    <div class="input-group-btn dropup">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ phoneNo.country || 'Select' }}  <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu scrollable-menu">
+            <li class="dropdown-header">
+                <input type="text" class="form-control" placeholder="Enter country" ng-model="search" />
+            </li>
+            <li ng-repeat="code in phoneNumberList | filter:search">
+                <a ng-click="setCode(code)" style="cursor:pointer">{{ code.name }}</a>
+            </li>
+        </ul>
+    </div>
+    <span class="input-group-addon" >{{ phoneNo.code }}</span>
+    <input type="text" class="form-control" ng-model="phoneNo.number" autocomplete="off" placeholder="Enter your phone number" ng-required="true">
+</div>

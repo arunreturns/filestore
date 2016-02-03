@@ -6,7 +6,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
         $scope.signupUser = function(){
             UserService.signupUser($scope.newUser).then(function(){
                 ngToast.create({
-                    className: 'warning',
+                    className: 'success',
                     content: 'Signed up successfully'
                 });
                 $state.go('profile');
@@ -20,7 +20,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
         $scope.updateUser = function(){
             UserService.updateUser($scope.user).then(function(){
                 ngToast.create({
-                    className: 'warning',
+                    className: 'success',
                     content: 'Profile Updated successfully'
                 });
                 $scope.userDetails.$setPristine();
@@ -49,17 +49,19 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                 password: $scope.password
             })
             .success(function(data){
-                $log.info("Login Succesful");
                 if ( data === "User Not Found!") {
+                    $log.info("[LoginModalCtrl] => User Not Found!");
                     $scope.addAlert(data,'warning');
                 } else if ( data === "Incorrect Password!") {
+                    $log.info("[LoginModalCtrl] => Incorrect Password!");
                     $scope.addAlert(data,'danger');
                 } else {
+                    $log.info("[LoginModalCtrl] => Login Succesful");
                     $uibModalInstance.close(data);
                 }
             })
-            .error(function(data){
-                $log.error("Error" + data);
+            .error(function(err){
+                $log.error("[LoginModalCtrl] => Error" + err);
             });
         };
         
@@ -78,9 +80,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 
 .controller('MainCtrl', 
     function($scope, UserService) {
-        console.log("Main Ctrl", UserService);
         $scope.user = UserService;
-        
         $scope.logOut = function(){
             UserService.logoutUser();
         };
@@ -96,8 +96,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
             
             if ( $scope.serverCmd ) {
                 $http.post('/runServerCmd', { "serverCmd" : $scope.serverCmd } )
-                .success(function(data){
-                    $scope.serverOutput = data;
+                .success(function(output){
+                    $scope.serverOutput = output;
                 })
                 .error(function(data){
                     $log.error("Error " + data);
@@ -116,20 +116,24 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
         $http.post('/viewFiles', {
             userName : UserService.userName
         }).success(function(files){
-            console.log(files);
+            $log.info("[ViewCtrl] => Files retrieved successfully");
+            $log.info("[ViewCtrl] => Files List is ");
+            $log.info(files);
             $scope.filesList = files;
         })
         .error(function(err, data){
-            $log.err("Error", err);
+            $log.error("[ViewCtrl] => Error", err);
         });
         
         $scope.removeFile = function(id){
-            console.log("Removing id ", id);
+            $log.info("[ViewCtrl] => Removing id ", id);
             $http.post("/removeFile", {
                 id: id,
                 userName : UserService.userName
             }).success(function(files){
-                console.log(files);
+                $log.info("[ViewCtrl] => File removed successfully");
+                $log.info("[ViewCtrl] => Updated file list");
+                $log.info(files);
                 $scope.filesList = files;
                 ngToast.create({
                     className: 'danger',
@@ -154,30 +158,31 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 )
 
 .controller('UploadCtrl',
-    function($scope, Upload, UserService, ngToast){
+    function($scope, Upload, UserService, ngToast, $log){
         $scope.upload = function (file) {
             $scope.f = file;
             console.log($scope.f);
             if ( !file )
                 return;
-            console.log("User is uploading" , UserService.userName);
+            $log.info("[UploadCtrl] => User " + UserService.userName + " is uploading");
             file.upload = Upload.upload({
                 url: 'uploadFiles',
                 data: {file: file, 'userName': UserService.userName}
             });
             
             file.upload.then(function (resp) {
-                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                $log.info('[UploadCtrl] => Success ' + resp.config.data.file.name + 'uploaded');
+                $log.info('[UploadCtrl] => Response: ' + resp.data);
                 ngToast.create({
-                    className: 'warning',
-                    content: 'Uploaded successfully'
+                    className: 'success',
+                    content: 'Uploaded ' + resp.config.data.file.name + ' successfully'
                 });
                 $scope.f = null;
             }, function (resp) {
-                console.log('Error status: ' + resp.status);
+                $log.info('[UploadCtrl] => Error status: ' + resp.status);
             }, function (evt) {
-                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                console.log('progress: ' + file.progress + '% ' + evt.config.data.file.name);
+                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total, 10));
+                $log.info('[UploadCtrl] => Progress: ' + file.progress + '% ' + evt.config.data.file.name);
             });
         };
     }

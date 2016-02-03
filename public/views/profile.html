@@ -29,7 +29,7 @@
         </div>
         <div class="form-group">
             <label>Phone Number</label>
-            <input type="text" class="form-control" autocomplete="off" ng-model="user.phoneNo" name="phoneNo" ng-required="true">
+            <phone-number-input phone-no="user.phoneNo"></phone-number-input>
         </div>
         <button type="submit" class="btn btn-warning btn-lg" ng-disabled="!userDetails.$dirty || !userDetails.$valid || clicked" ng-click="(clicked = !clicked) && updateUser()">
             {{ clicked ? 'Updating..' : 'Update' }}

@@ -39,6 +39,9 @@ angular.module('appRoutes', ['ui.router'])
             controller: 'SignupCtrl',
             data: {
                 requireLogin: false
+            },
+            onEnter: function($state, UserService) {
+                UserService.checkSession();
             }
         }).state('profile', {
             url: '/profile',

@@ -73,4 +73,34 @@ angular.module('appDirectives', [])
             });
         }
     };
-});
+})
+
+.directive('phoneNumberInput', function($http, $log) {
+   return {
+     scope: {
+         phoneNo: "=phoneNo",
+     },
+     controller: function($scope) {   
+         if ( !$scope.phoneNo )
+                $scope.phoneNo = {};
+         
+         $scope.setCode = function(code) {
+             
+        
+             $scope.phoneNo.code = code.dial_code;
+             $scope.phoneNo.country = code.name;
+             $scope.search = "";
+         };
+     },
+     templateUrl: 'views/phone-number-input.html',
+     link: function(scope, element, attrs, ctrl) {
+         $http.get("/phoneCountryCode").success(function(phoneNumberList){
+             $log.info(phoneNumberList);
+             scope.phoneNumberList = phoneNumberList;
+             scope.selectedName = phoneNumberList[0].name;
+         }).error(function(err){
+             $log.error(err);
+         });
+     }
+   };
+})

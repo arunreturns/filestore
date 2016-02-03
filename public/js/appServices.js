@@ -42,7 +42,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
                 // detect if there's a session in localstorage from previous use.
                 // if it is, pull into our service
                 var currentUser = $localstorage.getObject('currentUser');
-                console.log("Is current user in localStorage", currentUser);
+                $log.info("{UserService} -> Is current user in localStorage", currentUser);
                 
                 if (currentUser) {
                     // if there's a user, lets grab their favorites from the server
@@ -61,8 +61,10 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         
         signupUser: function(user){
             var self = this;
-            $log.info("Signing Up the User");
-            $http.post('/signup', {
+            
+            $log.info("{UserService} -> Signing Up the User");
+            $log.info(user);
+            return $http.post('/signup', {
                 user: user
             }).success(function(user){
                 $log.info(user);
@@ -74,12 +76,13 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         },
         updateUser: function(user){
             var self = this;
-            $log.info("Updating the User");
+            $log.info("{UserService} -> Updating the User");
             return $http.post('/update', {
                 user: user
             })
-            .success(function(user){
-                $log.info("Updated Successfully");
+            .success(function(updatedUser){
+                $log.info("{UserService} -> Updated Successfully");
+                $log.info(updatedUser);
                 self.setSession(user);
             })
             .error(function(err){
@@ -88,7 +91,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         },
         getUserData: function() {
             var self = this;
-            $log.info("Getting the User data");
+            $log.info("{UserService} -> Getting the User data");
             return $http.post('/profile', {
                 userName: self.currentUser.userName
             });

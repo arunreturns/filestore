@@ -29,10 +29,17 @@ body {
 
 .list-group-item  {
     background-color: white;
-    background-color: rgba(255,0,255,0);
-    border: 0;
+    background-color: rgba(255,255,255,0);
+    border: 0px;
 }
-
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+.dropdown-header {
+    padding: 10px;
+}
 .form-control {
     opacity: 0.7;    
 }
@@ -70,10 +77,10 @@ b {
     font-size: 16px;
 }
 
-#custom-bootstrap-menu.navbar-default .navbar-brand {
+#cust-nav-bar.navbar-default .navbar-brand {
     color: rgba(255, 255, 255, 1);
 }
-#custom-bootstrap-menu.navbar-default {
+#cust-nav-bar.navbar-default {
     font-size: 14px;
     background-color: rgba(22, 144, 159, 1);
     background: -webkit-linear-gradient(top, rgba(55, 182, 199, 1) 0%, rgba(22, 144, 159, 1) 100%);
@@ -81,37 +88,37 @@ b {
     border-width: 0px;
     border-radius: 0px;
 }
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+#cust-nav-bar.navbar-default .navbar-nav>li>a {
     color: rgba(255, 255, 255, 1);
     background-color: rgba(255, 255, 255, 0);
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
 }
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
-#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+#cust-nav-bar.navbar-default .navbar-nav>li>a:hover,
+#cust-nav-bar.navbar-default .navbar-nav>li>a:focus {
     color: rgba(120, 239, 255, 1);
     background-color: rgba(19, 174, 194, 1);
 }
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
-#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+#cust-nav-bar.navbar-default .navbar-nav>.active>a,
+#cust-nav-bar.navbar-default .navbar-nav>.active>a:hover,
+#cust-nav-bar.navbar-default .navbar-nav>.active>a:focus {
     color: rgba(120, 239, 255, 1);
     background-color: rgba(46, 177, 194, 0);
     background: -webkit-linear-gradient(top, rgba(22, 144, 159, 0) 0%, rgba(46, 177, 194, 0) 100%);
     background: linear-gradient(to bottom, rgba(22, 144, 159, 0) 0%, rgba(46, 177, 194, 0) 100%);
 }
-#custom-bootstrap-menu.navbar-default .navbar-toggle {
+#cust-nav-bar.navbar-default .navbar-toggle {
     border-color: #2eb1c2;
 }
-#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
-#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+#cust-nav-bar.navbar-default .navbar-toggle:hover,
+#cust-nav-bar.navbar-default .navbar-toggle:focus {
     background-color: #2eb1c2;
 }
-#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+#cust-nav-bar.navbar-default .navbar-toggle .icon-bar {
     background-color: #2eb1c2;
 }
-#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
-#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+#cust-nav-bar.navbar-default .navbar-toggle:hover .icon-bar,
+#cust-nav-bar.navbar-default .navbar-toggle:focus .icon-bar {
     background-color: #16909f;
 }
 
