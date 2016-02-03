@@ -13,16 +13,19 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-center pull-right">
-                                <button class="btn btn-sm btn-danger" ng-click="removeFile(file._id)">
-                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                </button>
-                                <button class="btn btn-sm btn-info" ng-click="sendMessage(file._id)">
-                                    <span class="glyphicon glyphicon-send"></span> Send
-                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Options <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        <li><a class="dropdown-links" ng-click="sendMail(file._id)"><span class="glyphicon glyphicon-envelope"></span> Mail</a></li>
+                                        <li><a class="dropdown-links" ng-click="sendMessage(file._id)"><span class="glyphicon glyphicon-send"></span> SMS</a></li>
+                                        <li><a class="dropdown-links" ng-click="removeFile(file._id)"><span class="glyphicon glyphicon-remove"></span> Delete</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
                 </li>
             </ul>
         </div>

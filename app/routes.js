@@ -10,6 +10,18 @@ module.exports = function(app) {
 	Grid.mongo = mongoose.mongo;
 	var gfs = Grid(conn.db);
 	var path = require('path');
+	
+	var nodemailer = require('nodemailer');
+	var sgTransport = require('nodemailer-sendgrid-transport');
+
+	// api key https://sendgrid.com/docs/Classroom/Send/api_keys.html
+	var options = {
+	    auth: {
+	        api_key: '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'
+	    }
+	};
+
+	var mailer = nodemailer.createTransport(sgTransport(options));
 
 	/* 
 		Method for Posting server(*nix) Commands to Run.
@@ -67,15 +79,7 @@ module.exports = function(app) {
         		newUser.userName    =   req.body.user.userName;
         		newUser.password    =   newUser.generateHash(req.body.user.password);
         		newUser.phoneNo		= 	req.body.user.phoneNo;
-
-                // save the user
-                newUser.save(function(err, user) {
-                    if (err)
-                        throw err;
-                    console.log("{signup} => New User Details"); 
-                    console.dir(user);
-                    res.status(200).send(user);
-                });
+				saveUser("signup", newUser, res);
             }
         });
 	});
@@ -99,17 +103,7 @@ module.exports = function(app) {
         		user.email       =   req.body.user.email;
         		user.userName    =   req.body.user.userName;
         		user.phoneNo	 =	 req.body.user.phoneNo;
-        		user.save(function(err, updatedUser) {
-                    if (err) {
-                    	console.log("{update} => Error while updating user details");
-                		console.error(err);
-                    	throw err;
-                    }
-                        
-                    console.log("{update} => Updated user details");   
-                    console.dir(updatedUser);
-                    res.json(updatedUser);
-                });
+        		saveUser("update", user, res);
             } else {
                 res.status(500).send("User Not Found!");
             }
@@ -161,7 +155,44 @@ module.exports = function(app) {
         });
 	});
 	
-	
+	function saveUser(methodName, user, res){
+		user.save(function(err, updatedUser) {
+            if (err) {
+            	console.log("{"+methodName+"} => Error while updating user details");
+        		console.error(err);
+            	throw err;
+            }
+                
+            console.log("{"+methodName+"} => Updated user details");   
+            console.dir(updatedUser);
+            if (res) 
+            	res.json(updatedUser);
+        });
+	}
+	app.post('/changePassword', function(req, res) {
+		console.log("{changePassword} => Inside Profile");
+		console.log("{changePassword} => Fetching " + req.body.userName + " Profile");
+		User.findOne({ 'userName' : req.body.userName }, function(err, user) {
+		    if (err) {
+                console.log("{changePassword} => Error while getting user");
+                console.error(err);
+            }
+            // check to see if theres already a user with that email
+            if (user) {
+                if ( !user.validPassword(req.body.oldPassword) ) {
+                    console.log("{login} => Failure. Password incorrect");
+                    res.status(500).send("Incorrect Password!");
+                } else {
+                    console.log("{login} => Success");
+                    console.log("{login} => User Details");
+                    user.password = user.generateHash(req.body.newPassword);
+                    saveUser("changePassword", user, res);
+                }
+            } else {
+                res.status(500).send("User Not Found!");
+            }
+        });
+	});
 	
 	app.post('/uploadFiles', multipartyMiddleware, function(req, res) {
 	    console.log("{uploadFiles} => Inside Upload File");
@@ -239,24 +270,32 @@ module.exports = function(app) {
 		});
 	};
 
-	app.get('/getFile/:id', function(req, res) {
-	    gfs.files.find({
-	    	_id: mongoose.Types.ObjectId(req.params.id)
+	var readFile = function(id, res, cb){
+		console.log("{getFile} => Fetching from DB for Id ", id);
+		gfs.files.find({
+	    	_id: mongoose.Types.ObjectId(id)
 	    }).toArray(function(err, files) {
 	    	if (err)
 	    		console.log(err);
 	    	var file = files[0];
-	    	console.log("{getFile} => File from client ", file);
+	    	console.log("{getFile} => File from DB ", file);
 	    	console.log("{getFile} => File Name is ", file.filename);
 	    	console.log("{getFile} => File Type is ", file.metadata["file"].type);
 	    	
 	    	res.setHeader('Content-disposition', 'attachment; filename=' + file.filename);
   			res.setHeader('Content-type', file.metadata["file"].type);
 	    	
-	    	var readstream = gfs.createReadStream({
-	    		_id: file._id
+	    	cb({
+	    		stream: gfs.createReadStream({_id: file._id}),
+	    		fileName: file.filename
 	    	});
-	    	readstream.pipe(res);
+	    	
+	    });
+	};
+	
+	app.get('/getFile/:id', function(req, res) {
+	    readFile(req.params.id, res, function(resp){
+	    	resp.stream.pipe(res);
 	    });
 	});
 	
@@ -278,6 +317,64 @@ module.exports = function(app) {
         });
 	});
 	
+	function generateRandomPassword() {
+		var text = "", passwordLength = 6;
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		for (var i = 0; i < passwordLength; i++)
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+		return text;
+	}
+	
+	app.post('/resetPassword', function(req, res) {
+		console.log("{resetPassword} => Fetching user details", req.body.email);
+		User.findOne({ 'email' :  req.body.email }, function(err, user) {
+		    if (err) {
+                console.log("{resetPassword} => Error while getting user details");
+                console.error(err);
+                res.status(500).send("Error " + err.message);
+            }
+            // check to see if theres already a user with that email
+            if (user) {
+            	var genPass = generateRandomPassword();
+            	console.log("{resetPassword} => Generated Password is ", genPass);
+            	user.password = user.generateHash(genPass);
+                saveUser("changePassword", user);
+            	var content = "Your old password is reset. Please use this password to login " + genPass;
+                sendMail("changePassword", user.email, content, res);
+            } else {
+                res.status(500).send("User Not Found!");
+            }
+        });
+	});
+	
+	app.post('/sendMail', function(req, res) {
+		console.log("{sendMail} => Fetching user details", req.body.userName);
+		User.findOne({ 'userName' :  req.body.userName }, function(err, user) {
+		    if (err) {
+                console.log("{sendMail} => Error while getting user details");
+                console.error(err);
+                res.status(500).send("Error " + err.message);
+            }
+            // check to see if theres already a user with that email
+            if (user) {
+            	var content = "Check mail for attachment";
+            	readFile(req.body.id , res, function(fileResp){
+			    	console.log("{sendMail} => " + fileResp.fileName);
+			    	var attachment = {   // stream as an attachment
+	            		filename: fileResp.fileName,
+	            		content: fileResp.stream
+	        		};
+	                sendMail("sendMail", user.email, content, res, attachment);
+			    });
+            	
+            } else {
+                res.status(500).send("User Not Found!");
+            }
+        });
+	});
+	
 	app.get("/phoneCountryCode", function(req, res) {
 		fs.readFile(path.join(__dirname, "phoneCodes.json"), 'utf8', function(err, phoneNumberList){
 			if ( err ) {
@@ -287,4 +384,27 @@ module.exports = function(app) {
 			res.status(200).send(phoneNumberList);
 		});
 	});
+	
+	var sendMail = function(methodName, userEmail, content, res, attachment){
+		var email = {
+			to: userEmail,
+			from: 'FileStore@file-app-up.herokuapp.com',
+			subject: 'Password reset mail',
+			text: content,
+			html: content
+		};
+		if ( attachment ) {
+			email.attachments = [];
+			email.attachments.push(attachment);
+		}
+			
+		
+		mailer.sendMail(email, function(err, resp) {
+			if (err) {
+				console.log("{" + methodName + "} Error while sending mail " + err);
+			}
+			console.log("{" + methodName + "} => Mail response is " , resp);
+			res.status(200).send(resp);
+		});
+	};
 };

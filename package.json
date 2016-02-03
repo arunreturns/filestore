@@ -8,9 +8,9 @@
     "postinstall": "./node_modules/bower/bin/bower install"
   },
   "dependencies": {
-    "bower": "latest",
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.4.2",
+    "bower": "latest",
     "connect-flash": "~0.1.1",
     "connect-multiparty": "^2.0.0",
     "cookie-parser": "~1.0.0",
@@ -21,6 +21,8 @@
     "method-override": "~2.0.2",
     "mongoose": "~3.8.0",
     "morgan": "~1.0.0",
+    "nodemailer": "^2.1.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "object-assign": "^4.0.1",
     "serve-favicon": "^2.3.0",
     "twilio": "^3.3.0-edge"

@@ -34,6 +34,10 @@
         <button type="submit" class="btn btn-warning btn-lg" ng-disabled="!userDetails.$dirty || !userDetails.$valid || clicked" ng-click="(clicked = !clicked) && updateUser()">
             {{ clicked ? 'Updating..' : 'Update' }}
         </button>
+        
+        <button type="submit" class="btn btn-success" ng-click="changePassword()">
+            Change Password
+        </button>
     </form>
 
     <hr>

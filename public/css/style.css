@@ -37,8 +37,17 @@ body {
     max-height: 200px;
     overflow-x: hidden;
 }
+.error-text {
+    font-size: 12px;
+    color: red;
+    text-align: right;
+}
 .dropdown-header {
     padding: 10px;
+}
+
+.dropdown-links {
+    cursor: pointer;
 }
 .form-control {
     opacity: 0.7;    

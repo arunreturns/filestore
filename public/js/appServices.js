@@ -2,7 +2,6 @@
 
 angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
 
-
 .factory('$localstorage', ['$window', function($window) {
     return {
         set: function(key, value) {
@@ -58,7 +57,20 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         
             return defer.promise;
         },
-        
+        changePassword: function(oldPassword, newPassword){
+            $log.info("{UserService} -> Changing the user password");
+            return $http.post('/changePassword', {
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                userName: this.currentUser.userName
+            });
+        },
+        resetPassword: function(email){
+            $log.info("{UserService} -> Resseting the user password");
+            return $http.post('/resetPassword', {
+                email: email,
+            });
+        },
         signupUser: function(user){
             var self = this;
             
@@ -108,17 +120,18 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
 })
 
 
-.service('LoginModal',
+.service('Modal',
     function ($uibModal, $log, UserService) {
         function assignCurrentUser (user) {
-            UserService.setSession(user);
+            if ( user )
+                UserService.setSession(user);
         }
 
-        return function() {
+        return function(view) {
             var instance = $uibModal.open({
                 animation: true,
-                templateUrl: 'views/login-modal.html',
-                controller: 'LoginModalCtrl',
+                templateUrl: view,
+                controller: "ModalCtrl",
                 backdrop: "static"
             });
 

@@ -1,3 +1,5 @@
+/* global angular */
+
 angular.module('appRoutes', ['ui.router'])
 .config(function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/home');

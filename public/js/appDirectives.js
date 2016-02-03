@@ -95,7 +95,6 @@ angular.module('appDirectives', [])
      templateUrl: 'views/phone-number-input.html',
      link: function(scope, element, attrs, ctrl) {
          $http.get("/phoneCountryCode").success(function(phoneNumberList){
-             $log.info(phoneNumberList);
              scope.phoneNumberList = phoneNumberList;
              scope.selectedName = phoneNumberList[0].name;
          }).error(function(err){

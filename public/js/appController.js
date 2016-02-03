@@ -1,4 +1,5 @@
 /* global angular */
+
 angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngToast'])
 
 .controller('SignupCtrl',
@@ -16,7 +17,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 )
 
 .controller('LoginCtrl',
-    function($scope, UserService, $log, ngToast) {
+    function($scope, UserService, $log, ngToast, Modal) {
         $scope.updateUser = function(){
             UserService.updateUser($scope.user).then(function(){
                 ngToast.create({
@@ -27,7 +28,16 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                 $scope.clicked = false;
             });
         };
-
+        $scope.changePassword = function(){
+            Modal('views/change-password.html', 'LoginCtrl')
+            .then(function () {
+                $log.info("[LoginCtrl] => Modal closed");
+            })
+            .catch(function () {
+                $log.info("[LoginCtrl] => Modal cancelled");
+            });
+            
+        };
         if ( UserService.currentUser) {
             UserService.getUserData().success(function(user) {
                 $scope.user = user;
@@ -39,10 +49,10 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
     }
 )
 
-.controller('LoginModalCtrl',
-    function ($scope, $uibModalInstance, $http, $log, ngToast) {
+.controller('ModalCtrl',
+    function ($scope, $uibModalInstance, $http, $log, ngToast, UserService) {
         $scope.alerts = [];
-            
+        $scope.togglePassword = false;    
         $scope.login = function(){
             $http.post('/login', {
                 userName: $scope.userName,
@@ -50,13 +60,13 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
             })
             .success(function(data){
                 if ( data === "User Not Found!") {
-                    $log.info("[LoginModalCtrl] => User Not Found!");
+                    $log.info("[ModalCtrl] => User Not Found!");
                     $scope.addAlert(data,'warning');
                 } else if ( data === "Incorrect Password!") {
-                    $log.info("[LoginModalCtrl] => Incorrect Password!");
+                    $log.info("[ModalCtrl] => Incorrect Password!");
                     $scope.addAlert(data,'danger');
                 } else {
-                    $log.info("[LoginModalCtrl] => Login Succesful");
+                    $log.info("[ModalCtrl] => Login Succesful");
                     $uibModalInstance.close(data);
                     ngToast.create({
                         className: 'success',
@@ -65,7 +75,35 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                 }
             })
             .error(function(err){
-                $log.error("[LoginModalCtrl] => Error" + err);
+                $log.error("[ModalCtrl] => Error" + err);
+            });
+        };
+        $scope.resetPassword = function(){
+            $log.info("[ModalCtrl] => Resetting password");
+            UserService.resetPassword($scope.email).success(function(user){
+                $uibModalInstance.close();
+                ngToast.create({
+                    className: 'success',
+                    content: 'Password updated successfully '
+                });
+            })
+            .error(function(err){
+                $scope.addAlert(err, "danger");
+                $log.error(err);
+            });
+        };
+        
+        $scope.changePassword = function(){
+            UserService.changePassword($scope.oldPassword, $scope.newPassword).success(function(user){
+                $uibModalInstance.close(user);
+                ngToast.create({
+                    className: 'success',
+                    content: 'Password updated successfully '
+                });
+            })
+            .error(function(err){
+                $scope.addAlert(err, "danger");
+                $log.error(err);
             });
         };
         
@@ -148,6 +186,18 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                     content: 'File Removed Successfully'
                 });
             });  
+        };
+        $scope.sendMail = function(id){
+            $http.post("/sendMail", {
+                id: id,
+                userName : UserService.userName
+            }).success(function(status){
+                $log.info(status);
+                ngToast.create({
+                    className: 'warning',
+                    content: 'Mail Sent successfully to ' + (UserService.currentUser.email)
+                });
+            });
         };
         
         $scope.sendMessage = function(id){

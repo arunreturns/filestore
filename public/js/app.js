@@ -1,6 +1,8 @@
+/* global angular */
+
 angular.module('fileApp', ['appRoutes','appControllers','appDirectives','appServices'])
     .run(
-        function ($rootScope, $state, LoginModal, $log, UserService) {
+        function ($rootScope, $state, Modal, $log, UserService) {
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
                 var requireLogin = toState.data.requireLogin;
                 if (requireLogin && UserService.currentUser === null) {
@@ -11,7 +13,7 @@ angular.module('fileApp', ['appRoutes','appControllers','appDirectives','appServ
                         if (hasSession) 
                             return $state.go(toState.name, toParams);
                         else {
-                            LoginModal()
+                            Modal("views/login-modal.html")
                             .then(function () {
                                 return $state.go(toState.name, toParams);
                             })
