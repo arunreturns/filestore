@@ -1,6 +1,14 @@
 /* global angular */
 
-angular.module('fileApp', ['appRoutes','appControllers','appDirectives','appServices'])
+angular.module('fileApp', ['appRoutes','appControllers','appDirectives','appServices','ngAnimate','ui.bootstrap', 'ngToast'])
+    .config(['ngToastProvider', function(ngToast) {
+        ngToast.configure({
+            verticalPosition: 'top',
+            horizontalPosition: 'right',
+            maxNumber: 3,
+            animation: 'fade'
+        });  
+    }])
     .run(
         function ($rootScope, $state, Modal, $log, UserService) {
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {

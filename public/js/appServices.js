@@ -119,7 +119,41 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
     return User;
 })
 
-
+.service('UIService', 
+    function(ngToast){
+        var UI = {
+            showWarning: function(content, timeout) {
+                ngToast.create({
+                    className: 'warning',
+                    content: content,
+                    dismissOnTimeout: true,
+                    timeout: timeout || 3000,
+                    dismissButton: true
+                });
+            },
+            showSuccess: function(content, timeout) {
+                ngToast.create({
+                    className: 'success',
+                    content: content,
+                    dismissOnTimeout: true,
+                    timeout: timeout || 3000,
+                    dismissButton: true
+                });
+            },
+            showDanger: function(content, timeout) {
+                ngToast.create({
+                    className: 'danger',
+                    content: content,
+                    dismissOnTimeout: true,
+                    timeout: timeout || 3000,
+                    dismissButton: true
+                });
+            }
+        };
+        return UI;
+    }
+    
+)
 .service('Modal',
     function ($uibModal, $log, UserService) {
         function assignCurrentUser (user) {
