@@ -40,7 +40,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 )
 
 .controller('LoginModalCtrl',
-    function ($scope, $uibModalInstance, $http, $log) {
+    function ($scope, $uibModalInstance, $http, $log, ngToast) {
         $scope.alerts = [];
             
         $scope.login = function(){
@@ -58,6 +58,10 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                 } else {
                     $log.info("[LoginModalCtrl] => Login Succesful");
                     $uibModalInstance.close(data);
+                    ngToast.create({
+                        className: 'success',
+                        content: 'Welcome back ' + data.firstName
+                    });
                 }
             })
             .error(function(err){
