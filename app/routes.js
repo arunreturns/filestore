@@ -224,7 +224,7 @@ module.exports = function(app) {
 		// Twilio Credentials 
 		var accountSid = 'ACc2c50c380e76b9d04c5cfce01f0842f6'; 
 		var authToken = 'b23dc58b1c9f0d3e12d4d1bb600fbedd'; 
-		 
+		console.log("{sendSMS} => Sending SMS to " + phone);
 		//require the Twilio module and create a REST client 
 		var client = require('twilio')(accountSid, authToken); 
 		 
@@ -269,7 +269,8 @@ module.exports = function(app) {
             }
             // check to see if theres already a user with that email
             if (user) {
-                sendSMS(user.phoneNo,"https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
+            	var phoneNo = user.phoneNo.code + user.phoneNo.number;
+                sendSMS(phoneNo,"https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
                 res.status(200).send("https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
             } else {
                 res.status(500).send("User Not Found!");

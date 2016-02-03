@@ -79,10 +79,14 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
 })
 
 .controller('MainCtrl', 
-    function($scope, UserService) {
+    function($scope, UserService, ngToast) {
         $scope.user = UserService;
         $scope.logOut = function(){
             UserService.logoutUser();
+            ngToast.create({
+                className: 'danger',
+                content: 'User logged out successfully'
+            });
         };
     }
 )
@@ -150,7 +154,7 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload','ngT
                 $log.info(url);
                 ngToast.create({
                     className: 'warning',
-                    content: 'SMS Sent successfully to ' + UserService.currentUser.phoneNo
+                    content: 'SMS Sent successfully to ' + (UserService.currentUser.phoneNo.code + UserService.currentUser.phoneNo.number)
                 });
             });
         };
