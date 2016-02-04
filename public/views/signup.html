@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
             <label>Phone Number</label>
-            <phone-number-input phone-no="newUser.phoneNo"></phone-number-input>
+            <phone-number-input phone-no="newUser.phoneNo" form="signupForm"></phone-number-input>
         </div>
         
         <button type="submit" class="btn btn-warning btn-lg" ng-disabled="!signupForm.$valid || clicked" ng-click="(clicked = !clicked) && signupUser()">

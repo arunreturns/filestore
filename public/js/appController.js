@@ -217,7 +217,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
         $scope.closeAlert = function(index) {
             $scope.alerts.splice(index, 1);
         };
-})
+}
+)
 
 /**
  * @ngdoc controller
@@ -241,7 +242,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
             UserService.logoutUser();
             UIService.showDanger('User logged out successfully');
         };
-})
+}
+)
 
 /**
  * @ngdoc controller
@@ -275,7 +277,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
         $scope.clearOutput = function(){
             $scope.serverOutput = "";
         };
-})
+}
+)
 
 /**
  * @ngdoc controller
@@ -358,7 +361,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
                     (UserService.currentUser.phoneNo.code + UserService.currentUser.phoneNo.number));
             });
         };
-    })
+    }
+)
 
 /**
  * @ngdoc controller

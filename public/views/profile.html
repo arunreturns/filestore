@@ -29,12 +29,11 @@
         </div>
         <div class="form-group">
             <label>Phone Number</label>
-            <phone-number-input phone-no="user.phoneNo"></phone-number-input>
+            <phone-number-input phone-no="user.phoneNo" form="userDetails"></phone-number-input>
         </div>
         <button type="submit" class="btn btn-warning btn-lg" ng-disabled="!userDetails.$dirty || !userDetails.$valid || clicked" ng-click="(clicked = !clicked) && updateUser()">
             {{ clicked ? 'Updating..' : 'Update' }}
         </button>
-        
         <button type="submit" class="btn btn-success" ng-click="changePassword()">
             Change Password
         </button>
