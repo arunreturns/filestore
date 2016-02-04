@@ -339,6 +339,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
             }).success(function(status){
                 $log.info(status);
                 UIService.showWarning('Mail Sent successfully to ' + (UserService.currentUser.email));
+            }).error(function(err){
+                UIService.showDanger(err.message);
             });
         };
         
@@ -359,6 +361,9 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
                 $log.info(url);
                 UIService.showWarning('SMS Sent successfully to ' + 
                     (UserService.currentUser.phoneNo.code + UserService.currentUser.phoneNo.number));
+            }).error(function(err){
+                $log.info(err);
+                UIService.showDanger(err.message);
             });
         };
     }

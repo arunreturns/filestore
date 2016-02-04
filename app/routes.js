@@ -354,8 +354,9 @@ module.exports = function(app) {
 		Method to send SMS to the user with the url of the file
 		Params: phone			=>	The phoneNo of the user
 				content			=> 	The content of the SMS
+				res				=> 	The response object for error and data
 	*/
-	var sendSMS = function(phone, content){
+	var sendSMS = function(phone, content, res){
 		// Twilio Credentials 
 		var accountSid = 'ACc2c50c380e76b9d04c5cfce01f0842f6'; 
 		var authToken = 'b23dc58b1c9f0d3e12d4d1bb600fbedd'; 
@@ -368,9 +369,13 @@ module.exports = function(app) {
 			from: "+13312156004", 
 			body: content,   
 		}, function(err, message) { 
-			if ( err )
+			if ( err ) {
 				console.log("{sendSMS} => err", err);
-			console.log("{sendSMS} => SMS Id is " + message.sid); 
+				res.status(500).send(err);
+			} else {
+				console.log("{sendSMS} => SMS Id is " + message.sid); 
+				res.status(200).send(message.sid);	
+			}
 		});
 	};
 	
@@ -380,7 +385,7 @@ module.exports = function(app) {
 				userEmail		=> 	The email address to where the mail is to be sent
 				subject			=> 	The subject of the mail
 				content			=> 	The content of the mail
-				res				=> 	The response object for error and data.Array
+				res				=> 	The response object for error and data
 				attachment		=> 	Attachement to be sent along with the mail
 	*/
 	var sendMail = function(methodName, userEmail, subject, content, res, attachment){
@@ -399,9 +404,11 @@ module.exports = function(app) {
 		mailer.sendMail(email, function(err, resp) {
 			if (err) {
 				console.log("{" + methodName + "} Error while sending mail " + err);
+				res.status(500).send(err);	
+			} else {
+				console.log("{" + methodName + "} => Mail response is " , resp);
+				res.status(200).send(resp);	
 			}
-			console.log("{" + methodName + "} => Mail response is " , resp);
-			res.status(200).send(resp);
 		});
 	};
 	
@@ -456,8 +463,7 @@ module.exports = function(app) {
 		findUserByUserName("sendMessage", req.body.userName, res, function(user){
 			var phoneNo = user.phoneNo.code + user.phoneNo.number;
         	var url = "https://" + appName + "/getFile/" + req.body.id;
-            sendSMS(phoneNo, url);
-            res.status(200).send(url);
+            sendSMS(phoneNo, url, res);
 		});
 	});
 	
