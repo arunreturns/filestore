@@ -8,7 +8,8 @@ var UserSchema = new mongoose.Schema({
   password: {type: String},
   email: {type: String},
   phoneNo: {type: Object},
-  isAdmin: {type: Boolean, default: false}
+  isAdmin: {type: Boolean, default: false},
+  isPasswordChanged: {type: Boolean, default: false}
 });
 
 

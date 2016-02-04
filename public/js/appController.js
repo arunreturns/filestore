@@ -44,8 +44,9 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
 )
 
 .controller('ModalCtrl',
-    function ($scope, $uibModalInstance, $http, $log, UIService, UserService) {
+    function ($scope, $uibModalInstance, $http, $log, UIService, UserService, Modal) {
         $scope.alerts = [];
+        $scope.user = UserService;
         $scope.togglePassword = false;    
         $scope.login = function(){
             $http.post('/login', {
@@ -62,6 +63,12 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
                 } else {
                     $log.info("[ModalCtrl] => Login Succesful");
                     $uibModalInstance.close(data);
+                    if ( data.isPasswordChanged ) {
+                        Modal("views/change-password.html")
+                        .then(function () {
+                            
+                        });
+                    }
                     UIService.showSuccess('Welcome back ' + data.firstName);
                 }
             })
@@ -182,7 +189,8 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
                 userName : UserService.userName
             }).success(function(url){
                 $log.info(url);
-                UIService.showWarning('SMS Sent successfully to ' + (UserService.currentUser.phoneNo.code + UserService.currentUser.phoneNo.number));
+                UIService.showWarning('SMS Sent successfully to ' + 
+                    (UserService.currentUser.phoneNo.code + UserService.currentUser.phoneNo.number));
             });
         };
     }

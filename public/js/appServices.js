@@ -35,6 +35,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
         
             if (self.currentUser) {
                 // if this session is already initialized in the service
+                $log.info("{UserService} -> Is current user in Service", self.currentUser);
                 defer.resolve(true);
             }
             else {
@@ -166,7 +167,8 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
                 animation: true,
                 templateUrl: view,
                 controller: "ModalCtrl",
-                backdrop: "static"
+                backdrop: "static",
+                keyboard: false
             });
 
             return instance.result.then(assignCurrentUser);

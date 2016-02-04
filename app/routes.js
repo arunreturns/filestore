@@ -10,6 +10,7 @@ module.exports = function(app) {
 	Grid.mongo = mongoose.mongo;
 	var gfs = Grid(conn.db);
 	var path = require('path');
+	var appName = app.get("appName");
 	
 	var nodemailer = require('nodemailer');
 	var sgTransport = require('nodemailer-sendgrid-transport');
@@ -44,7 +45,21 @@ module.exports = function(app) {
 		else 
 		    res.status(200).send("{runServerCmd} => You can't run remove/kill commands");
 	});
-
+	
+	function saveUser(methodName, user, res){
+		user.save(function(err, updatedUser) {
+            if (err) {
+            	console.log("{"+methodName+"} => Error while updating user details");
+        		console.error(err);
+            	throw err;
+            }
+                
+            console.log("{"+methodName+"} => Updated user details");   
+            console.dir(updatedUser);
+            if (res) 
+            	res.json(updatedUser);
+        });
+	}
 	/* 
 		Endpoint for Signing up the user. 
 	*/
@@ -155,20 +170,6 @@ module.exports = function(app) {
         });
 	});
 	
-	function saveUser(methodName, user, res){
-		user.save(function(err, updatedUser) {
-            if (err) {
-            	console.log("{"+methodName+"} => Error while updating user details");
-        		console.error(err);
-            	throw err;
-            }
-                
-            console.log("{"+methodName+"} => Updated user details");   
-            console.dir(updatedUser);
-            if (res) 
-            	res.json(updatedUser);
-        });
-	}
 	app.post('/changePassword', function(req, res) {
 		console.log("{changePassword} => Inside Profile");
 		console.log("{changePassword} => Fetching " + req.body.userName + " Profile");
@@ -180,14 +181,51 @@ module.exports = function(app) {
             // check to see if theres already a user with that email
             if (user) {
                 if ( !user.validPassword(req.body.oldPassword) ) {
-                    console.log("{login} => Failure. Password incorrect");
+                    console.log("{changePassword} => Failure. Password incorrect");
                     res.status(500).send("Incorrect Password!");
                 } else {
-                    console.log("{login} => Success");
-                    console.log("{login} => User Details");
+                    console.log("{changePassword} => Success");
+                    console.log("{changePassword} => User Details");
                     user.password = user.generateHash(req.body.newPassword);
+                    user.isPasswordChanged = false;
+                    console.log("{changePassword} => Password changed is ", user.isPasswordChanged);
                     saveUser("changePassword", user, res);
                 }
+            } else {
+                res.status(500).send("User Not Found!");
+            }
+        });
+	});
+	
+	function generateRandomPassword() {
+		var text = "", passwordLength = 6;
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		for (var i = 0; i < passwordLength; i++)
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+		return text;
+	}
+	
+	app.post('/resetPassword', function(req, res) {
+		console.log("{resetPassword} => Fetching user details", req.body.email);
+		User.findOne({ 'email' :  req.body.email }, function(err, user) {
+		    if (err) {
+                console.log("{resetPassword} => Error while getting user details");
+                console.error(err);
+                res.status(500).send("Error " + err.message);
+            }
+            // check to see if theres already a user with that email
+            if (user) {
+            	var genPass = generateRandomPassword();
+            	console.log("{resetPassword} => Generated Password is ", genPass);
+            	user.password = user.generateHash(genPass);
+            	user.isPasswordChanged = true;
+            	
+                saveUser("resetPassword", user);
+            	var content = "Your old password is reset. Please use this password to login " + genPass;
+            	var subject = "Password Reset Mail from FileStore";
+                sendMail("resetPassword", user.email, subject, content, res);
             } else {
                 res.status(500).send("User Not Found!");
             }
@@ -210,7 +248,6 @@ module.exports = function(app) {
 		var writestream = gfs.createWriteStream({
 		    filename: file.name,
 		    metadata: meta,
-		    contentType: file.type
 		});
 		read_stream.pipe(writestream);
 		
@@ -282,8 +319,8 @@ module.exports = function(app) {
 	    	console.log("{getFile} => File Name is ", file.filename);
 	    	console.log("{getFile} => File Type is ", file.metadata["file"].type);
 	    	
-	    	res.setHeader('Content-disposition', 'attachment; filename=' + file.filename);
-  			res.setHeader('Content-type', file.metadata["file"].type);
+	    	res.setHeader('Content-type', file.metadata["file"].type);
+	    	res.setHeader('Content-disposition', 'attachment; filename="' + file.filename + '"');
 	    	
 	    	cb({
 	    		stream: gfs.createReadStream({_id: file._id}),
@@ -309,40 +346,9 @@ module.exports = function(app) {
             // check to see if theres already a user with that email
             if (user) {
             	var phoneNo = user.phoneNo.code + user.phoneNo.number;
-                sendSMS(phoneNo,"https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
-                res.status(200).send("https://file-app-ud.herokuapp.com/getFile/" + req.body.id);
-            } else {
-                res.status(500).send("User Not Found!");
-            }
-        });
-	});
-	
-	function generateRandomPassword() {
-		var text = "", passwordLength = 6;
-		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-		for (var i = 0; i < passwordLength; i++)
-			text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-		return text;
-	}
-	
-	app.post('/resetPassword', function(req, res) {
-		console.log("{resetPassword} => Fetching user details", req.body.email);
-		User.findOne({ 'email' :  req.body.email }, function(err, user) {
-		    if (err) {
-                console.log("{resetPassword} => Error while getting user details");
-                console.error(err);
-                res.status(500).send("Error " + err.message);
-            }
-            // check to see if theres already a user with that email
-            if (user) {
-            	var genPass = generateRandomPassword();
-            	console.log("{resetPassword} => Generated Password is ", genPass);
-            	user.password = user.generateHash(genPass);
-                saveUser("changePassword", user);
-            	var content = "Your old password is reset. Please use this password to login " + genPass;
-                sendMail("changePassword", user.email, content, res);
+            	var url = "https://" + appName + "/getFile/" + req.body.id;
+                sendSMS(phoneNo, url);
+                res.status(200).send(url);
             } else {
                 res.status(500).send("User Not Found!");
             }
@@ -359,6 +365,7 @@ module.exports = function(app) {
             }
             // check to see if theres already a user with that email
             if (user) {
+            	var subject;
             	var content = "Check mail for attachment";
             	readFile(req.body.id , res, function(fileResp){
 			    	console.log("{sendMail} => " + fileResp.fileName);
@@ -366,7 +373,8 @@ module.exports = function(app) {
 	            		filename: fileResp.fileName,
 	            		content: fileResp.stream
 	        		};
-	                sendMail("sendMail", user.email, content, res, attachment);
+	        		subject = "File [" + fileResp.fileName + "] Sent From FileStore";
+	                sendMail("sendMail", user.email, subject, content, res, attachment);
 			    });
             	
             } else {
@@ -385,19 +393,18 @@ module.exports = function(app) {
 		});
 	});
 	
-	var sendMail = function(methodName, userEmail, content, res, attachment){
+	var sendMail = function(methodName, userEmail, subject, content, res, attachment){
 		var email = {
 			to: userEmail,
-			from: 'FileStore@file-app-up.herokuapp.com',
-			subject: 'Password reset mail',
+			from: 'FileStore@' + appName,
+			subject: subject,
 			text: content,
-			html: content
+			html: content,
+			attachments: []
 		};
 		if ( attachment ) {
-			email.attachments = [];
 			email.attachments.push(attachment);
 		}
-			
 		
 		mailer.sendMail(email, function(err, resp) {
 			if (err) {

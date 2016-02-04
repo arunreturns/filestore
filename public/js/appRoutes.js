@@ -11,8 +11,18 @@ angular.module('appRoutes', ['ui.router'])
             data: {
                 requireLogin: false
             },
-            onEnter: function($state, UserService) {
-                UserService.checkSession();
+            onEnter: function($state, UserService, Modal) {
+                UserService.checkSession().then(function(hasSession) {
+                    console.log("Has Session ?", hasSession);
+                    if (hasSession) {
+                        if ( UserService.currentUser.isPasswordChanged ) {
+                            Modal("views/change-password.html")
+                            .then(function () {
+                                
+                            });
+                        }
+                    }
+                });
             }
         }).state('upload', {
             url: '/upload',
@@ -42,8 +52,18 @@ angular.module('appRoutes', ['ui.router'])
             data: {
                 requireLogin: false
             },
-            onEnter: function($state, UserService) {
-                UserService.checkSession();
+            onEnter: function($state, UserService, Modal) {
+                UserService.checkSession().then(function(hasSession) {
+                    console.log("Has Session ?", hasSession);
+                    if (hasSession) {
+                        if ( UserService.currentUser.isPasswordChanged ) {
+                            Modal("views/change-password.html")
+                            .then(function () {
+                                
+                            });
+                        }
+                    }
+                });
             }
         }).state('profile', {
             url: '/profile',
