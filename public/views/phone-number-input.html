@@ -13,5 +13,9 @@
         </ul>
     </div>
     <span class="input-group-addon" ng-if="phoneNo.code">{{ phoneNo.code }}</span>
+    <div ng-show="false">
+        <input type="text" ng-model="phoneNo.code" name="code" ng-required="true"  />
+        <input type="text" ng-model="phoneNo.country" name="country" ng-required="true"  />
+    </div>
     <input type="text" class="form-control" ng-model="phoneNo.number" autocomplete="off" placeholder="Enter your phone number" ng-required="true">
 </div>
