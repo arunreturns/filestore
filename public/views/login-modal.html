@@ -6,7 +6,7 @@
 
 <div class="modal-body">
     <div ng-repeat="alert in alerts" class="alert alert-{{alert.type}} alert-dismissible"
-            role="alert" close="closeAlert($index)">
+            role="alert" close="closeAlert($index)" id="{{alert.id}}">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             {{alert.msg}}
     </div>
@@ -19,6 +19,12 @@
             <label for="password">Password</label>
             <input type="password" ng-model='password' class="form-control" id="password" autocomplete="off" placeholder="Enter Password" ng-required="true" />
         </div>
+        <div class="pull-right">
+            <input type="submit" class="btn btn-success" ng-disabled="!loginForm.$valid" value="Login"></input>
+            <input type="button" ng-click='dismissModal()' data-dismiss='modal' class="btn btn-default" value="Cancel"></input>
+        </div>
+        
+        
     </form>
     
     <form name="resetPassForm" ng-submit="login()" ng-show="togglePassword">
@@ -26,20 +32,14 @@
             <label for="userName">E Mail</label>
             <input type="text" id="email" ng-model='email' class="form-control" id="email" autocomplete="off" placeholder="Enter Email Address" ng-required="true" />
         </div>
+        
+        <div class="pull-right">
+            <input type="submit" class="btn btn-success" ng-disabled="!resetPassForm.$valid" value="Reset Password"></input>
+            <input type="button" ng-click='dismissModal()' data-dismiss='modal' class="btn btn-default" value="Cancel"></input>
+        </div>
     </form>
     
     <a href="#" ng-click="togglePassword = !togglePassword">{{ togglePassword ? 'Back to Login' : 'Forgot Password' }}</a>
     
-    
-</div>
-
-<div class="modal-footer">
-    <div class="pull-right" ng-show="togglePassword">
-        <input type="button" ng-click='resetPassword()' class="btn btn-success" ng-disabled="!resetPassForm.$valid" value="Reset Password"></input>
-        <input type="button" ng-click='dismissModal()' data-dismiss='modal' class="btn btn-default" value="Cancel"></input>
-    </div>
-    <div class="pull-right" ng-show="!togglePassword">
-        <input type="button" ng-click='login()' class="btn btn-success" ng-disabled="!loginForm.$valid" value="Login"></input>
-        <input type="button" ng-click='dismissModal()' data-dismiss='modal' class="btn btn-default" value="Cancel"></input>
-    </div>
+    <br/><br/>
 </div>

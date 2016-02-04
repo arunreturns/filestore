@@ -6,7 +6,7 @@ angular.module('fileApp', ['appRoutes','appControllers','appDirectives','appServ
         verticalPosition: 'top',
         horizontalPosition: 'right',
         maxNumber: 3,
-        animation: 'fade'
+        animation: 'slide'
     });  
 }])
 .run(

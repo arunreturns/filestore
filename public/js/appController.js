@@ -44,35 +44,29 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
 )
 
 .controller('ModalCtrl',
-    function ($scope, $uibModalInstance, $http, $log, UIService, UserService, Modal) {
+    function ($scope, $uibModalInstance, $http, $log, UIService, UserService, Modal, $timeout) {
         $scope.alerts = [];
         $scope.user = UserService;
-        $scope.togglePassword = false;    
+        $scope.togglePassword = false;
+        
         $scope.login = function(){
             $http.post('/login', {
                 userName: $scope.userName,
                 password: $scope.password
             })
             .success(function(data){
-                if ( data === "User Not Found!") {
-                    $log.info("[ModalCtrl] => User Not Found!");
-                    $scope.addAlert(data,'warning');
-                } else if ( data === "Incorrect Password!") {
-                    $log.info("[ModalCtrl] => Incorrect Password!");
-                    $scope.addAlert(data,'danger');
-                } else {
-                    $log.info("[ModalCtrl] => Login Succesful");
-                    $uibModalInstance.close(data);
-                    if ( data.isPasswordChanged ) {
-                        Modal("views/change-password.html")
-                        .then(function () {
-                            
+                $log.info("[ModalCtrl] => Login Succesful");
+                $uibModalInstance.close(data);
+                if (data.isPasswordChanged) {
+                    Modal("views/change-password.html")
+                        .then(function() {
+                
                         });
-                    }
-                    UIService.showSuccess('Welcome back ' + data.firstName);
                 }
+                UIService.showSuccess('Welcome back ' + data.firstName);
             })
             .error(function(err){
+                $scope.addAlert(err, "danger");
                 $log.error("[ModalCtrl] => Error" + err);
             });
         };
@@ -104,7 +98,15 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
         };
         
         $scope.addAlert = function(msg,type) {
-            $scope.alerts.push({type: type,msg: msg});
+            var alert = {type: type,msg: msg, id: Date.now()};
+            $scope.alerts.push(alert);
+            $timeout(function(){
+                var id = "#"+ alert.id;
+                console.log("Closing id " + id);
+                $(id).fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 3000);
         };
         
         $scope.closeAlert = function(index) {
