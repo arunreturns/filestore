@@ -139,9 +139,8 @@ module.exports = function(app) {
             	var errMsg = user.email === req.body.user.email ? 
             					"User already registered with the mail address" : 
             					"User already registered with the username";
-            	
+            	console.log("{signup} => " + errMsg);
                 res.status(500).send(errMsg);
-                console.log("{signup} => " + errMsg);
             } else {
                 console.log("{signup} => Creating A New User");
                 // if there is no user with that email or username
@@ -162,10 +161,32 @@ module.exports = function(app) {
 	app.post('/update', function(req, res) {
 		console.log("{update} => Inside Update");
 		
-		findUserByUserName("profile", req.body.user.userName, res, function(user){
-			setUserDetails("signup", req.body.user, user, false, function(updatedUser){
-            	saveUser("signup", updatedUser, res);
-            });
+		findUserByUserName("profile", req.body.user.userName, res, function(currentUser){
+			User.findOne({'email' : req.body.user.email}, function(err, user) {
+			    if (err) {
+	                console.log("{update} => Error in checking existing user");
+	                console.error(err);
+	                res.status(500).send(err);
+	            }
+	            if ( user ) {
+	            	if ( currentUser.userName !== user.userName ) {
+		            	console.log("{update} => Checking mails " + req.body.user.email + " === " + user.email );
+		            	console.log("{update} => Checking userName " + req.body.user.userName + " === " + user.userName );
+		            	var errMsg = user.email === req.body.user.email ? 
+		            					"User already registered with the mail address" : 
+		            					"User already registered with the username";
+		            	res.status(500).send(errMsg);
+	            	} else {
+	            		setUserDetails("update", req.body.user, user, false, function(updatedUser){
+			            	saveUser("update", updatedUser, res);
+			            });
+	            	}
+	            } else {
+	            	setUserDetails("update", req.body.user, user, false, function(updatedUser){
+		            	saveUser("update", updatedUser, res);
+		            });
+	            }
+	        });
 		});
 	});
 	

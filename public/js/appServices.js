@@ -171,7 +171,7 @@ angular.module('appServices', ['ngAnimate', 'ui.bootstrap'])
                     self.setSession(user);
                 })
                 .error(function(err){
-                    $log.error("Error" + err);
+                    $log.error("Error: " + err);
                 });
             },
             

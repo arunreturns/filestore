@@ -50,9 +50,13 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
          * @returns none
          */
         $scope.updateUser = function(){
+            
             UserService.updateUser($scope.user).then(function(){
                 UIService.showSuccess('Profile Updated successfully');
                 $scope.userDetails.$setPristine();
+                $scope.clicked = false;
+            }, function(err){
+                UIService.showDanger(err.data);
                 $scope.clicked = false;
             });
         };
