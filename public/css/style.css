@@ -2,6 +2,11 @@
     font-family: Dosis;
     src: url('../fonts/Dosis-Medium.ttf');
 }
+@font-face {
+    font-family: Dosis-Light;
+    src: url('../fonts/Dosis-Light.ttf');
+}
+
 
 html {
     min-height: 100%;
@@ -53,6 +58,11 @@ body {
     opacity: 0.7;    
 }
 
+.heading {
+    font-family: "Dosis-Light";
+    font-size: 16px;
+    text-align: center;
+}
 .modal {
   text-align: center;
   padding: 0!important;
