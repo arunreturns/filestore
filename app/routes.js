@@ -1,27 +1,41 @@
 module.exports = function(app) {
 
-	var User = require("./models/User");
-	var multiparty = require('connect-multiparty');
-	var multipartyMiddleware = multiparty();
-	var fs = require("fs");
-	var mongoose = require('mongoose');
-	var conn = app.get("conn");
-	var Grid = require('gridfs-stream');
-	Grid.mongo = mongoose.mongo;
-	var gfs = Grid(conn.db);
-	var path = require('path');
-	var appName = app.get("appName");
-	var nodemailer = require('nodemailer');
-	var sgTransport = require('nodemailer-sendgrid-transport');
-
-	var options = {
-	    auth: {
-	        api_key: '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'
-	    }
-	};
-
-	var mailer = nodemailer.createTransport(sgTransport(options));
-
+	var User 					= require("./models/User");
+	var multiparty 				= require('connect-multiparty');
+	var multipartyMiddleware 	= multiparty();
+	var fs 						= require("fs");
+	var mongoose 				= require('mongoose');
+	var conn 					= app.get("conn");
+	var Grid 					= require('gridfs-stream');
+	Grid.mongo 					= mongoose.mongo;
+	var gfs 					= Grid(conn.db);
+	var path 					= require('path');
+	var appName 				= app.get("appName");
+	var nodemailer 				= require('nodemailer');
+	var sgTransport 			= require('nodemailer-sendgrid-transport');
+	var Apis 					= require("./models/Apis");
+	
+	var KEY_STORE = {};
+	var mailer;
+	
+	Apis.find({}, function(err, apis){
+		if ( err ) {
+			console.log("Error while fetching the APIs");
+			console.log(err);
+		}
+		for ( var api in apis ){
+			KEY_STORE[apis[api].type] = apis[api].key;
+		}
+		var options = {
+		    auth: {
+		        api_key: KEY_STORE["SEND_GRID"]
+		    }
+		};
+		
+		mailer = nodemailer.createTransport(sgTransport(options));
+	});
+	
+	
 	/* 
 		Endpoint for Posting server(*nix) Commands to Run.
 		Uses the following libs
@@ -87,6 +101,7 @@ module.exports = function(app) {
             	callback(user);
             }
             else {
+            	console.log("{" + methodName + "} <findUserByUserName> => User Not Found!");
             	res.status(500).send("User Not Found!");
             }
 		});
@@ -160,7 +175,10 @@ module.exports = function(app) {
 	*/
 	app.post('/update', function(req, res) {
 		console.log("{update} => Inside Update");
-		
+		if ( !req.body.user || typeof req.body.user === "undefined" ) {
+			res.status(500).send("Insufficient Params");
+			res.end();
+		}
 		findUserByUserName("profile", req.body.user.userName, res, function(currentUser){
 			User.findOne({'email' : req.body.user.email}, function(err, user) {
 			    if (err) {
@@ -177,12 +195,12 @@ module.exports = function(app) {
 		            					"User already registered with the username";
 		            	res.status(500).send(errMsg);
 	            	} else {
-	            		setUserDetails("update", req.body.user, user, false, function(updatedUser){
+	            		setUserDetails("update", req.body.user, currentUser, false, function(updatedUser){
 			            	saveUser("update", updatedUser, res);
 			            });
 	            	}
 	            } else {
-	            	setUserDetails("update", req.body.user, user, false, function(updatedUser){
+	            	setUserDetails("update", req.body.user, currentUser, false, function(updatedUser){
 		            	saveUser("update", updatedUser, res);
 		            });
 	            }
@@ -198,7 +216,11 @@ module.exports = function(app) {
 	app.post('/login', function(req, res) {
 		console.log("{login} => Inside Login");
 		console.log("{login} => User : ", req.body.userName);
-		findUserByUserName("profile", req.body.userName, res, function(user){
+		if ( !req.body.userName || typeof req.body.userName === "undefined" ) {
+			res.status(500).send("Insufficient Params");
+		}
+		
+		findUserByUserName("login", req.body.userName, res, function(user){
 			if ( !user.validPassword(req.body.password) ) {
                 console.log("{login} => Failure. Password incorrect");
                 res.status(500).send("Incorrect Password!");
@@ -206,7 +228,7 @@ module.exports = function(app) {
                 console.log("{login} => Success");
                 console.log("{login} => User Details");
                 console.log(user);
-                res.json(user);
+                res.status(200).send(user);
             }
 		});
 	});
@@ -219,11 +241,13 @@ module.exports = function(app) {
     app.post('/profile', function(req, res) {
 		console.log("{profile} => Inside profile");
 		console.log("{profile} => Fetching " + req.body.userName + " Profile");
-
+		if ( !req.body.userName || typeof req.body.userName === "undefined" ) {
+			res.status(500).send("Insufficient Params");
+		}
 		findUserByUserName("profile", req.body.userName, res, function(user){
 			console.log("{profile} => Returning user data");
         	console.log(user);
-            res.json(user);
+            res.status(200).send(user);
 		});
 	});
 	
@@ -379,8 +403,9 @@ module.exports = function(app) {
 	*/
 	var sendSMS = function(phone, content, res){
 		// Twilio Credentials 
-		var accountSid = 'ACc2c50c380e76b9d04c5cfce01f0842f6'; 
-		var authToken = 'b23dc58b1c9f0d3e12d4d1bb600fbedd'; 
+		console.log(KEY_STORE);
+		var accountSid = KEY_STORE["TWILIO_SID"]; 
+		var authToken = KEY_STORE["TWILIO_TOKEN"]; 
 		console.log("{sendSMS} => Sending SMS to " + phone);
 		//require the Twilio module and create a REST client 
 		var client = require('twilio')(accountSid, authToken); 

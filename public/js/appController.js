@@ -199,12 +199,13 @@ angular.module('appControllers', ['ngAnimate','ui.bootstrap','ngFileUpload'])
          */
         $scope.addAlert = function(msg,type) {
             var alert = {type: type,msg: msg, id: Date.now()};
-            $scope.alerts.push(alert);
+            var index = $scope.alerts.push(alert) - 1;
             $timeout(function(){
                 var id = "#"+ alert.id;
-                console.log("Closing id " + id);
+                console.log("Closing id " + id + " Removing Index " + index);
                 $(id).fadeTo(500, 0).slideUp(500, function() {
                     $(this).remove();
+                    $scope.closeAlert(index);
                 });
             }, 3000);
         };

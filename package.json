@@ -4,7 +4,7 @@
   "description": "A sample Node.js app using the MEAN Framework",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "postinstall": "./node_modules/bower/bin/bower install"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "morgan": "~1.0.0",
     "nodemailer": "^2.1.0",
     "nodemailer-sendgrid-transport": "^0.2.0",
+    "nodemon": "^1.8.1",
     "object-assign": "^4.0.1",
     "serve-favicon": "^2.3.0",
     "twilio": "^3.3.0-edge"
@@ -40,5 +41,9 @@
     "express",
     "mean"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "supertest": "^1.1.0"
+  }
 }
